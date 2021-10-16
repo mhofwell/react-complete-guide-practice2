@@ -8,8 +8,9 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const loginToken = localStorage.getItem("isLoggedIn");
-    if (loginToken === "1") {
+    const storedUserLogin = localStorage.getItem("isLoggedIn");
+
+    if (storedUserLogin === "1") {
       setIsLoggedIn(true);
     }
   }, []);
@@ -17,8 +18,9 @@ function App() {
   const loginHandler = (email, password) => {
     // We should of course check email and password
     // But it's just a dummy/ demo anyways
+    // use a KV pair with setItem
+    localStorage.setItem("isLoggedIn", "1");
     setIsLoggedIn(true);
-    localStorage.setItem('isLoggedIn', "1")
   };
 
   const logoutHandler = () => {
