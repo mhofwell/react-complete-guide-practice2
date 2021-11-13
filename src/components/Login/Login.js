@@ -10,7 +10,7 @@ const emailReducer = (prevState, action) => {
     return { value: action.val, isValid: action.val.includes("@") };
   }
   if (action.type === "INPUT_BLUR") {
-    return { value: "", isValid: false };
+    return { value: action.val, isValid: action.val.includes("@") };
   }
   return { value: prevState.value, isValid: prevState.value.includes("@") };
 };
@@ -20,19 +20,15 @@ const passwordReducer = (prevState, action) => {
     return { value: action.val, isValid: action.val.length > 6 };
   }
   if (action.type === "INPUT_BLUR") {
-    return { value: "", isValid: false };
+    return { value: action.val, isValid: action.val.length > 6 };
   }
   return { value: prevState.value.trim(), isValid: prevState.value.length > 6 };
 };
 
 const Login = (props) => {
-  // const [enteredEmail, setEnteredEmail] = useState("");
-  // const [emailIsValid, setEmailIsValid] = useState();
-  // const [enteredPassword, setEnteredPassword] = useState("");
-  // const [passwordIsValid, setPasswordIsValid] = useState();
   const [formIsValid, setFormIsValid] = useState(false);
 
-  const [emailState, dispatchEmail] = useReducer(emailReducer, {
+  const [emailState, dispatchEmailReducer] = useReducer(emailReducer, {
     value: "",
     isValid: null,
   });
@@ -44,7 +40,7 @@ const Login = (props) => {
 
 
   // further optimize useEffect, you can destructure your objects to get only the isValid value and use that value as a dependency for your useEffect so it only re-runs when the validity has changed and not re-run a validity check every time the pw field changes even after its been validated. 
-  
+
   const {isValid: emailIsValid} = emailState; 
   const {isValid: pwIsValid} = pwState; 
 
@@ -60,7 +56,7 @@ const Login = (props) => {
 
   const emailChangeHandler = (event) => {
     // description 'type' and payload 'val'
-    dispatchEmail({ type: "USER_INPUT", val: event.target.value });
+    dispatchEmailReducer({ type: "USER_INPUT", val: event.target.value });
 
     setFormIsValid(
       event.target.value.includes("@") && pwState.isValid
@@ -68,20 +64,20 @@ const Login = (props) => {
   };
 
   const passwordChangeHandler = (event) => {
-    passwordReducer({ type: "USER_INPUT", val: event.target.value });
+    dispatchPasswordReducer({ type: "USER_INPUT", val: event.target.value });
 
     setFormIsValid(emailState.isValid && event.target.value.trim().length > 6);
   };
 
-  const validateEmailHandler = () => {
-    dispatchEmail({
-      type: "INPUT_BLUR",
+  const validateEmailHandler = (e) => {
+    dispatchEmailReducer({
+      type: "INPUT_BLUR", val: e.target.value,
     });
   };
 
-  const validatePasswordHandler = () => {
+  const validatePasswordHandler = (e) => {
     dispatchPasswordReducer({
-      type: "INPUT_BLUR",
+      type: "INPUT_BLUR", val: e.target.value,
     });
   };
 
